@@ -1,0 +1,6 @@
+{
+  "name": "Tasbih Counter",
+  "description": "A peaceful, distraction-free digital tasbih counter with authentic Arabic dhikr, Urdu translations, custom goals, volume button counting, statistics, and daily reminders.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
