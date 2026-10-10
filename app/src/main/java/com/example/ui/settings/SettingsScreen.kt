@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
@@ -57,6 +58,7 @@ fun SettingsScreen(
     viewModel: SettingsViewModel,
     onNavigateToVolumeSettings: () -> Unit,
     onNavigateToReminders: () -> Unit,
+    onNavigateToAzanSettings: () -> Unit,
     onNavigateToAiFuture: () -> Unit,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
@@ -238,10 +240,17 @@ fun SettingsScreen(
                     )
                     SettingsNavigationItem(
                         icon = Icons.Default.Notifications,
-                        title = "Daily Reminders",
-                        subtitle = "Manage daily dhikr notifications",
+                        title = "Daily Reminders (یومیہ یاد دہانی)",
+                        subtitle = "Islamic tune notifications & exact alarms",
                         onClick = onNavigateToReminders,
                         tag = "nav_reminders"
+                    )
+                    SettingsNavigationItem(
+                        icon = Icons.Default.Campaign,
+                        title = "Azan & Prayer Times (اوقاتِ اذان و نماز)",
+                        subtitle = "5 daily prayer alerts with custom times",
+                        onClick = onNavigateToAzanSettings,
+                        tag = "nav_azan_settings"
                     )
                     SettingsNavigationItem(
                         icon = Icons.Default.AutoAwesome,

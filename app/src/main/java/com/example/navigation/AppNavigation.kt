@@ -28,6 +28,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.ui.ai.AiFutureScreen
+import com.example.ui.azan.AzanSettingsScreen
 import com.example.ui.history.HistoryScreen
 import com.example.ui.history.HistoryViewModel
 import com.example.ui.home.HomeScreen
@@ -179,6 +180,7 @@ fun AppNavigation(
                     viewModel = settingsViewModel,
                     onNavigateToVolumeSettings = { navController.navigate(Screen.VolumeSettings.route) },
                     onNavigateToReminders = { navController.navigate(Screen.Reminders.route) },
+                    onNavigateToAzanSettings = { navController.navigate(Screen.AzanSettings.route) },
                     onNavigateToAiFuture = { navController.navigate(Screen.AiFuture.route) },
                     onNavigateBack = { navController.popBackStack() }
                 )
@@ -193,6 +195,13 @@ fun AppNavigation(
 
             composable(Screen.Reminders.route) {
                 RemindersScreen(
+                    viewModel = settingsViewModel,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(Screen.AzanSettings.route) {
+                AzanSettingsScreen(
                     viewModel = settingsViewModel,
                     onNavigateBack = { navController.popBackStack() }
                 )

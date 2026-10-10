@@ -177,4 +177,20 @@ class TasbihCounterTest {
         val completedCount = sessionDao.getCompletedSessionsCount().first()
         assertEquals(2, completedCount)
     }
+
+    @Test
+    fun testDeviceGuideDetection() {
+        val guide = com.example.util.DeviceUtils.getDeviceGuide()
+        assertNotNull(guide)
+        assertTrue(guide.stepsUrdu.isNotEmpty())
+        assertTrue(guide.stepsEnglish.isNotEmpty())
+    }
+
+    @Test
+    fun testIslamicTuneAvailability() {
+        val tunes = com.example.util.IslamicTunePlayer.AVAILABLE_TUNES
+        assertTrue(tunes.size >= 4)
+        assertNotNull(tunes.firstOrNull { it.id == "tune_subhanallah" })
+        assertNotNull(tunes.firstOrNull { it.id == "tune_azan_alert" })
+    }
 }

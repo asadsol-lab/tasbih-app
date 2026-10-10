@@ -16,12 +16,17 @@ class BootReceiver : BroadcastReceiver() {
             val app = context.applicationContext as? TasbihApp ?: return
             CoroutineScope(Dispatchers.IO).launch {
                 val prefs = app.userPreferencesRepository.userPreferencesFlow.first()
+                // Reschedule Daily Reminders if active
                 if (prefs.reminderEnabled) {
                     ReminderScheduler.scheduleDailyReminder(
                         context,
                         prefs.reminderHour,
                         prefs.reminderMinute
                     )
+                }
+                // Reschedule Azan prayer calls if active
+                if (prefs.azanEnabled) {
+                    AzanScheduler.scheduleAllPrayers(context, prefs)
                 }
             }
         }

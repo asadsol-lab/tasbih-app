@@ -45,12 +45,23 @@ class TasbihApp : Application() {
             val reminderChannel = NotificationChannel(
                 CHANNEL_REMINDERS_ID,
                 "Daily Dhikr Reminders",
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = "Daily notifications reminding you to recite your dhikr and tasbih"
                 enableVibration(true)
             }
             notificationManager.createNotificationChannel(reminderChannel)
+
+            // Azan Prayer Calls channel
+            val azanChannel = NotificationChannel(
+                com.example.service.AzanReceiver.CHANNEL_AZAN_ID,
+                "Azan Prayer Calls",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Daily 5 Azan prayer call alerts"
+                enableVibration(true)
+            }
+            notificationManager.createNotificationChannel(azanChannel)
 
             // Active counter notification channel
             val serviceChannel = NotificationChannel(

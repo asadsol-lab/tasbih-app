@@ -9,13 +9,16 @@ import java.util.Calendar
 
 object ReminderScheduler {
 
+    const val ACTION_DAILY_REMINDER = "com.aistudio.tasbihcounter.ACTION_REMINDER"
     private const val REQUEST_CODE = 1001
 
     fun scheduleDailyReminder(context: Context, hour: Int, minute: Int) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
 
         val intent = Intent(context, ReminderReceiver::class.java).apply {
-            action = "com.aistudio.tasbihcounter.ACTION_REMINDER"
+            action = ACTION_DAILY_REMINDER
+            putExtra("reminder_hour", hour)
+            putExtra("reminder_minute", minute)
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
@@ -30,24 +33,38 @@ object ReminderScheduler {
             set(Calendar.MINUTE, minute)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
-            // If time is in past for today, schedule for tomorrow
+            // If the time already passed today, schedule for tomorrow
             if (before(Calendar.getInstance())) {
                 add(Calendar.DAY_OF_YEAR, 1)
             }
         }
 
-        alarmManager.setInexactRepeating(
-            AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
-            AlarmManager.INTERVAL_DAY,
-            pendingIntent
-        )
+        val triggerTime = calendar.timeInMillis
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if (alarmManager.canScheduleExactAlarms()) {
+                        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    } else {
+                        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    }
+                } else {
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                }
+            } else {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+            }
+        } catch (_: Exception) {
+            // Fallback for unexpected OEM security limits
+            alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+        }
     }
 
     fun cancelReminder(context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
         val intent = Intent(context, ReminderReceiver::class.java).apply {
-            action = "com.aistudio.tasbihcounter.ACTION_REMINDER"
+            action = ACTION_DAILY_REMINDER
         }
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -55,6 +72,9 @@ object ReminderScheduler {
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0)
         )
-        alarmManager.cancel(pendingIntent)
+        try {
+            alarmManager.cancel(pendingIntent)
+        } catch (_: Exception) {
+        }
     }
 }
