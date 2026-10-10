@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
@@ -34,6 +35,7 @@ import com.example.ui.history.HistoryViewModel
 import com.example.ui.home.HomeScreen
 import com.example.ui.home.HomeViewModel
 import com.example.ui.home.TargetSetupScreen
+import com.example.ui.onboarding.OnboardingScreen
 import com.example.ui.reminders.RemindersScreen
 import com.example.ui.settings.SettingsScreen
 import com.example.ui.settings.SettingsViewModel
@@ -64,6 +66,8 @@ fun AppNavigation(
     val historyViewModel: HistoryViewModel = viewModel()
     val statisticsViewModel: StatisticsViewModel = viewModel()
     val settingsViewModel: SettingsViewModel = viewModel()
+
+    val prefs by settingsViewModel.preferences.collectAsStateWithLifecycle()
 
     val bottomNavItems = listOf(
         BottomNavItem(Screen.Home.route, "Counter", Icons.Default.RadioButtonChecked, "tab_counter"),
@@ -109,9 +113,20 @@ fun AppNavigation(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Home.route,
+            startDestination = if (prefs.hasCompletedOnboarding) Screen.Home.route else Screen.Onboarding.route,
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable(Screen.Onboarding.route) {
+                OnboardingScreen(
+                    onComplete = {
+                        settingsViewModel.setHasCompletedOnboarding(true)
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Onboarding.route) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
             composable(Screen.Home.route) {
                 HomeScreen(
                     viewModel = homeViewModel,
@@ -181,6 +196,7 @@ fun AppNavigation(
                     onNavigateToVolumeSettings = { navController.navigate(Screen.VolumeSettings.route) },
                     onNavigateToReminders = { navController.navigate(Screen.Reminders.route) },
                     onNavigateToAzanSettings = { navController.navigate(Screen.AzanSettings.route) },
+                    onNavigateToOnboarding = { navController.navigate(Screen.Onboarding.route) },
                     onNavigateToAiFuture = { navController.navigate(Screen.AiFuture.route) },
                     onNavigateBack = { navController.popBackStack() }
                 )

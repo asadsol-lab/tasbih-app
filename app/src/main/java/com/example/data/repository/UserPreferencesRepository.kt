@@ -16,8 +16,17 @@ import kotlinx.coroutines.flow.map
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "tasbih_preferences")
 
+enum class AppLanguage(val displayName: String) {
+    ENGLISH("English"),
+    URDU("اردو"),
+    ROMAN_URDU("Roman Urdu")
+}
+
 data class UserPreferences(
     val themeMode: AppThemeMode = AppThemeMode.SYSTEM,
+    val appLanguage: AppLanguage = AppLanguage.ENGLISH,
+    val hasCompletedOnboarding: Boolean = false,
+    val pocketStealthModeEnabled: Boolean = false,
     val vibrationEnabled: Boolean = true,
     val soundEnabled: Boolean = true,
     val volumeMode: VolumeMode = VolumeMode.BOTH,
@@ -25,12 +34,12 @@ data class UserPreferences(
     val reminderEnabled: Boolean = false,
     val reminderHour: Int = 20,
     val reminderMinute: Int = 0,
-    val reminderTune: String = "tune_subhanallah",
+    val reminderTune: String = "azan_takbeer_short",
     val activeZikrId: Long = 1L,
     val activeTarget: Int = 33,
     // Azan Settings
     val azanEnabled: Boolean = false,
-    val azanTune: String = "tune_azan_alert",
+    val azanTune: String = "azan_makkah",
     val azanFajrEnabled: Boolean = true,
     val azanFajrHour: Int = 5,
     val azanFajrMinute: Int = 0,
@@ -52,6 +61,9 @@ class UserPreferencesRepository(private val context: Context) {
 
     private object PreferencesKeys {
         val THEME_MODE = stringPreferencesKey("theme_mode")
+        val APP_LANGUAGE = stringPreferencesKey("app_language")
+        val HAS_COMPLETED_ONBOARDING = booleanPreferencesKey("has_completed_onboarding")
+        val POCKET_STEALTH_MODE = booleanPreferencesKey("pocket_stealth_mode")
         val VIBRATION_ENABLED = booleanPreferencesKey("vibration_enabled")
         val SOUND_ENABLED = booleanPreferencesKey("sound_enabled")
         val VOLUME_MODE = stringPreferencesKey("volume_mode")
@@ -88,11 +100,17 @@ class UserPreferencesRepository(private val context: Context) {
             val themeStr = preferences[PreferencesKeys.THEME_MODE] ?: AppThemeMode.SYSTEM.name
             val themeMode = runCatching { AppThemeMode.valueOf(themeStr) }.getOrDefault(AppThemeMode.SYSTEM)
 
+            val langStr = preferences[PreferencesKeys.APP_LANGUAGE] ?: AppLanguage.ENGLISH.name
+            val appLanguage = runCatching { AppLanguage.valueOf(langStr) }.getOrDefault(AppLanguage.ENGLISH)
+
             val volumeStr = preferences[PreferencesKeys.VOLUME_MODE] ?: VolumeMode.BOTH.name
             val volumeMode = runCatching { VolumeMode.valueOf(volumeStr) }.getOrDefault(VolumeMode.BOTH)
 
             UserPreferences(
                 themeMode = themeMode,
+                appLanguage = appLanguage,
+                hasCompletedOnboarding = preferences[PreferencesKeys.HAS_COMPLETED_ONBOARDING] ?: false,
+                pocketStealthModeEnabled = preferences[PreferencesKeys.POCKET_STEALTH_MODE] ?: false,
                 vibrationEnabled = preferences[PreferencesKeys.VIBRATION_ENABLED] ?: true,
                 soundEnabled = preferences[PreferencesKeys.SOUND_ENABLED] ?: true,
                 volumeMode = volumeMode,
@@ -100,13 +118,13 @@ class UserPreferencesRepository(private val context: Context) {
                 reminderEnabled = preferences[PreferencesKeys.REMINDER_ENABLED] ?: false,
                 reminderHour = preferences[PreferencesKeys.REMINDER_HOUR] ?: 20,
                 reminderMinute = preferences[PreferencesKeys.REMINDER_MINUTE] ?: 0,
-                reminderTune = preferences[PreferencesKeys.REMINDER_TUNE] ?: "tune_subhanallah",
+                reminderTune = preferences[PreferencesKeys.REMINDER_TUNE] ?: "azan_takbeer_short",
                 activeZikrId = preferences[PreferencesKeys.ACTIVE_ZIKR_ID] ?: 1L,
                 activeTarget = preferences[PreferencesKeys.ACTIVE_TARGET] ?: 33,
 
                 // Azan
                 azanEnabled = preferences[PreferencesKeys.AZAN_ENABLED] ?: false,
-                azanTune = preferences[PreferencesKeys.AZAN_TUNE] ?: "tune_azan_alert",
+                azanTune = preferences[PreferencesKeys.AZAN_TUNE] ?: "azan_makkah",
                 azanFajrEnabled = preferences[PreferencesKeys.AZAN_FAJR_ENABLED] ?: true,
                 azanFajrHour = preferences[PreferencesKeys.AZAN_FAJR_HOUR] ?: 5,
                 azanFajrMinute = preferences[PreferencesKeys.AZAN_FAJR_MINUTE] ?: 0,
@@ -128,6 +146,24 @@ class UserPreferencesRepository(private val context: Context) {
     suspend fun setThemeMode(mode: AppThemeMode) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.THEME_MODE] = mode.name
+        }
+    }
+
+    suspend fun setAppLanguage(language: AppLanguage) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.APP_LANGUAGE] = language.name
+        }
+    }
+
+    suspend fun setHasCompletedOnboarding(completed: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.HAS_COMPLETED_ONBOARDING] = completed
+        }
+    }
+
+    suspend fun setPocketStealthMode(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.POCKET_STEALTH_MODE] = enabled
         }
     }
 

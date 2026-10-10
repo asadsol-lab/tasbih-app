@@ -59,6 +59,7 @@ fun SettingsScreen(
     onNavigateToVolumeSettings: () -> Unit,
     onNavigateToReminders: () -> Unit,
     onNavigateToAzanSettings: () -> Unit,
+    onNavigateToOnboarding: () -> Unit,
     onNavigateToAiFuture: () -> Unit,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
@@ -94,6 +95,42 @@ fun SettingsScreen(
                 .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // Language Selection Section
+            Text(
+                text = "App Language • زبان کا انتخاب",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(8.dp)) {
+                    ThemeOptionRow(
+                        title = "English (Default)",
+                        isSelected = prefs.appLanguage == com.example.data.repository.AppLanguage.ENGLISH,
+                        onClick = { viewModel.setAppLanguage(com.example.data.repository.AppLanguage.ENGLISH) },
+                        tag = "lang_english"
+                    )
+                    ThemeOptionRow(
+                        title = "اردو (Urdu)",
+                        isSelected = prefs.appLanguage == com.example.data.repository.AppLanguage.URDU,
+                        onClick = { viewModel.setAppLanguage(com.example.data.repository.AppLanguage.URDU) },
+                        tag = "lang_urdu"
+                    )
+                    ThemeOptionRow(
+                        title = "Roman Urdu (Urdu in English text)",
+                        isSelected = prefs.appLanguage == com.example.data.repository.AppLanguage.ROMAN_URDU,
+                        onClick = { viewModel.setAppLanguage(com.example.data.repository.AppLanguage.ROMAN_URDU) },
+                        tag = "lang_roman_urdu"
+                    )
+                }
+            }
             // Theme Section
             Text(
                 text = "Appearance & Theme",
@@ -251,6 +288,13 @@ fun SettingsScreen(
                         subtitle = "5 daily prayer alerts with custom times",
                         onClick = onNavigateToAzanSettings,
                         tag = "nav_azan_settings"
+                    )
+                    SettingsNavigationItem(
+                        icon = Icons.Default.Info,
+                        title = "Device Setup & Features Tour (پہلی بار کا سیٹ اپ)",
+                        subtitle = "Review phone optimization & feature guide",
+                        onClick = onNavigateToOnboarding,
+                        tag = "nav_onboarding"
                     )
                     SettingsNavigationItem(
                         icon = Icons.Default.AutoAwesome,

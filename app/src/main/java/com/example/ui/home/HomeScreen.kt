@@ -28,6 +28,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.Adjust
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
@@ -88,6 +90,7 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showResetDialog by remember { mutableStateOf(false) }
     var showCompletionDialog by remember { mutableStateOf(false) }
+    var isPocketStealthMode by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
@@ -121,6 +124,16 @@ fun HomeScreen(
                     titleContentColor = MaterialTheme.colorScheme.onSurface
                 ),
                 actions = {
+                    IconButton(
+                        onClick = { isPocketStealthMode = true },
+                        modifier = Modifier.testTag("action_stealth_pocket")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.DarkMode,
+                            contentDescription = "Pocket Stealth Mode (Black Screen Counter)",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                     IconButton(
                         onClick = onNavigateToVolumeSettings,
                         modifier = Modifier.testTag("action_volume")
@@ -535,5 +548,75 @@ fun HomeScreen(
                 }
             }
         )
+    }
+
+    // AMOLED Pocket Stealth Touch Mode Overlay
+    if (isPocketStealthMode) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+                .clickable { viewModel.increment() }
+                .testTag("stealth_pocket_mode_container"),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp, vertical = 40.dp)
+            ) {
+                // Top exit bar
+                Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    color = Color(0xFF1B241E),
+                    modifier = Modifier.clickable { isPocketStealthMode = false }
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Exit Pocket Mode",
+                            tint = Color(0xFF4EDE9A),
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Tap to Exit Stealth Mode • بند کریں",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = Color(0xFF4EDE9A)
+                        )
+                    }
+                }
+
+                // Faint centered count
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "${uiState.count}",
+                        style = MaterialTheme.typography.displayLarge.copy(fontSize = 72.sp),
+                        color = Color.White.copy(alpha = 0.14f),
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = "TOUCH ANYWHERE TO COUNT • کہیں بھی ٹچ کریں",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White.copy(alpha = 0.08f),
+                        letterSpacing = 2.sp
+                    )
+                }
+
+                // Bottom discrete note
+                Text(
+                    text = "OLED 0% Battery • Phone behaves like screen is off in pocket with vibration",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.15f),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
     }
 }

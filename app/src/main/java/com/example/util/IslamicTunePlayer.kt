@@ -22,43 +22,55 @@ object IslamicTunePlayer {
 
     val AVAILABLE_TUNES = listOf(
         IslamicTuneItem(
+            id = "azan_makkah",
+            title = "Azan Makkah Al-Mukarramah",
+            description = "أَذَان مَكَّة الْمُكَرَّمَة • Authentic Maqam Hijaz Adhan",
+            rawResId = R.raw.azan_makkah
+        ),
+        IslamicTuneItem(
+            id = "azan_madinah",
+            title = "Azan Madinah Al-Munawwarah",
+            description = "أَذَان الْمَدِينَة الْمُنَوَّرَة • Melodious Maqam Bayati Adhan",
+            rawResId = R.raw.azan_madinah
+        ),
+        IslamicTuneItem(
+            id = "azan_fajr",
+            title = "Azan Fajr (Al-Salatu Khayrun)",
+            description = "أَذَان الفَجْر • With الصَّلَاةُ خَيْرٌ مِنَ النَّوْمِ",
+            rawResId = R.raw.azan_fajr
+        ),
+        IslamicTuneItem(
+            id = "azan_takbeer_short",
+            title = "Allahu Akbar Takbeerat",
+            description = "تَكْبِيرَات العِيد وَالأَذَان • Powerful Adhan Call Alert",
+            rawResId = R.raw.azan_takbeer_short
+        ),
+        IslamicTuneItem(
             id = "tune_subhanallah",
             title = "SubhanAllah Harmony",
-            description = "سُبْحَانَ اللَّهِ • Soothing Spiritual Chime",
+            description = "سُبْحَانَ اللَّهِ • Peaceful Spiritual Chime",
             rawResId = R.raw.tune_subhanallah
         ),
         IslamicTuneItem(
             id = "tune_takbeer",
-            title = "Makkah Takbeer Melody",
+            title = "Takbeer Melody Chime",
             description = "اللَّهُ أَكْبَرُ • Melodic Prayer Chime",
             rawResId = R.raw.tune_takbeer
         ),
         IslamicTuneItem(
-            id = "tune_fajr_dawn",
-            title = "Spiritual Dawn Tone",
-            description = "الصَّلَاةُ خَيْرٌ مِنَ النَّوْمِ • Calming Morning Bells",
-            rawResId = R.raw.tune_fajr_dawn
-        ),
-        IslamicTuneItem(
-            id = "tune_azan_alert",
-            title = "Azan Prayer Call Chime",
-            description = "أَذَان مُبَارَك • Dignified Azan Alert",
-            rawResId = R.raw.tune_azan_alert
-        ),
-        IslamicTuneItem(
             id = "tune_system",
             title = "System Default Tone",
-            description = "Device default notification chime",
+            description = "Device default notification sound",
             rawResId = null
         )
     )
 
     fun getTuneResId(tuneId: String): Int {
-        return AVAILABLE_TUNES.firstOrNull { it.id == tuneId }?.rawResId ?: R.raw.tune_subhanallah
+        return AVAILABLE_TUNES.firstOrNull { it.id == tuneId }?.rawResId ?: R.raw.azan_makkah
     }
 
     fun getTuneTitle(tuneId: String): String {
-        return AVAILABLE_TUNES.firstOrNull { it.id == tuneId }?.title ?: "Islamic Chime"
+        return AVAILABLE_TUNES.firstOrNull { it.id == tuneId }?.title ?: "Azan Makkah"
     }
 
     fun getTuneUri(context: Context, tuneId: String): Uri? {
@@ -93,7 +105,7 @@ object IslamicTunePlayer {
 
     fun playAlarm(context: Context, tuneId: String) {
         stop()
-        val resId = AVAILABLE_TUNES.firstOrNull { it.id == tuneId }?.rawResId ?: R.raw.tune_subhanallah
+        val resId = AVAILABLE_TUNES.firstOrNull { it.id == tuneId }?.rawResId ?: R.raw.azan_makkah
         try {
             val player = MediaPlayer.create(context.applicationContext, resId).apply {
                 setAudioAttributes(

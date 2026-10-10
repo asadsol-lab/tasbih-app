@@ -190,7 +190,7 @@ class TasbihCounterTest {
     fun testIslamicTuneAvailability() {
         val tunes = com.example.util.IslamicTunePlayer.AVAILABLE_TUNES
         assertTrue(tunes.size >= 4)
-        assertNotNull(tunes.firstOrNull { it.id == "tune_subhanallah" })
-        assertNotNull(tunes.firstOrNull { it.id == "tune_azan_alert" })
+        assertNotNull(tunes.firstOrNull { it.id == "azan_makkah" })
+        assertNotNull(tunes.firstOrNull { it.id == "azan_fajr" })
     }
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.TasbihApp
 import com.example.data.model.VolumeMode
+import com.example.data.repository.AppLanguage
 import com.example.data.repository.UserPreferences
 import com.example.service.AzanScheduler
 import com.example.service.ReminderScheduler
@@ -36,6 +37,24 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     fun setThemeMode(mode: AppThemeMode) {
         viewModelScope.launch {
             preferencesRepository.setThemeMode(mode)
+        }
+    }
+
+    fun setAppLanguage(language: AppLanguage) {
+        viewModelScope.launch {
+            preferencesRepository.setAppLanguage(language)
+        }
+    }
+
+    fun setHasCompletedOnboarding(completed: Boolean) {
+        viewModelScope.launch {
+            preferencesRepository.setHasCompletedOnboarding(completed)
+        }
+    }
+
+    fun setPocketStealthMode(enabled: Boolean) {
+        viewModelScope.launch {
+            preferencesRepository.setPocketStealthMode(enabled)
         }
     }
 

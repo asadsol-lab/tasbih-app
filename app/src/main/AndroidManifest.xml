@@ -57,6 +57,11 @@
             </intent-filter>
         </receiver>
 
+        <!-- Receiver to stop Azan sound on demand -->
+        <receiver
+            android:name=".service.StopAzanReceiver"
+            android:exported="false" />
+
         <!-- Receiver for boot completion to reschedule reminders & azan -->
         <receiver
             android:name=".service.BootReceiver"
