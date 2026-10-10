@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+      STORE_PASSWORD: password654321
+      KEY_PASSWORD: password654321
 
     steps:
       - name: Checkout Repository
@@ -32,11 +34,17 @@ jobs:
             chmod +x gradlew
           fi
 
-      - name: Build Debug APK with Gradle
-        run: ./gradlew assembleDebug
+      - name: Build Debug & Release APKs with Gradle
+        run: ./gradlew assembleDebug assembleRelease
 
-      - name: Upload APK Artifact
+      - name: Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-v1.2
           path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload Release APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-v1.2
+          path: app/build/outputs/apk/release/app-release.apk
